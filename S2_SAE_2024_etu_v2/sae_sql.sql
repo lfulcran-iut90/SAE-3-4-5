@@ -161,17 +161,3 @@ INSERT INTO etat (libelle) VALUES
 ('En cours de traitement'),
 ('Expédiée'),
 ('Annulée');
-
-
-
-
-
-
-SELECT *
-FROM ligne_panier;
-
-
-SELECT SUM(b.prix * quantite)
-FROM ligne_panier
-LEFT JOIN boisson b on ligne_panier.boisson_id = b.id_boisson;
-
