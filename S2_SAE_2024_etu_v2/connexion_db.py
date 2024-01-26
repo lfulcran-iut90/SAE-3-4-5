@@ -12,7 +12,6 @@ def get_db():
             user="lfulcran",
             password="2311",
             database="BDD_lfulcran_sae",
-            charset='utf8mb4',
             cursorclass=pymysql.cursors.DictCursor
         )
     return db

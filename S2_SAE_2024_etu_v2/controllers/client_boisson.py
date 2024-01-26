@@ -32,16 +32,21 @@ def client_boisson_show():                                 # remplace client_ind
     mycursor.execute(sql)
     types_boisson = mycursor.fetchall()
 
-    sql= '''SELECT boisson.id_boisson,boisson.nom, ligne_panier.quantite, boisson.prix
+    tuple = (id_client,)
+    sql= '''SELECT boisson.id_boisson,boisson.nom, ligne_panier.quantite, boisson.prix, boisson.stock
             FROM ligne_panier
-            LEFT JOIN boisson ON boisson.id_boisson = ligne_panier.boisson_id;
+            LEFT JOIN boisson ON boisson.id_boisson = ligne_panier.boisson_id
+            WHERE utilisateur_id = %s;
             '''
-    mycursor.execute(sql)
+    mycursor.execute(sql, tuple)
     boissons_panier = mycursor.fetchall()
 
     if len(boissons_panier) >= 1:
-        sql = ''' calcul du prix total du panier '''
-        prix_total = None
+        sql = ''' SELECT SUM(b.prix * quantite)
+                  FROM ligne_panier
+                  LEFT JOIN boisson b on ligne_panier.boisson_id = b.id_boisson; '''
+        mycursor.execute(sql)
+        prix_total = mycursor.fetchone()
     else:
         prix_total = None
     return render_template('client/boutique/panier_boisson.html'

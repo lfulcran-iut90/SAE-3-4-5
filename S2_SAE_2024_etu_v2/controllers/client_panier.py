@@ -46,7 +46,7 @@ def client_panier_add():
     if boissonPresent is None:
         tuple = (id_client, id_boisson, quantite)
         sql = '''INSERT INTO ligne_panier(utilisateur_id, boisson_id, quantite,date_ajout) VALUES 
-            (%s, %s, %s, NULL) ;'''
+            (%s, %s, %s, NOW()) ;'''
         mycursor.execute(sql, tuple)
         get_db().commit()
     else:
@@ -174,6 +174,123 @@ def client_panier_filtre():
     filter_prix_min = request.form.get('filter_prix_min', None)
     filter_prix_max = request.form.get('filter_prix_max', None)
     filter_types = request.form.getlist('filter_types', None)
+    temp = []
+
+
+    sql = '''SELECT *
+             FROM type_boisson;'''
+    mycursor.execute(sql)
+    type_boisson = mycursor.fetchall()
+
+    if filter_word and filter_word != "":
+        if filter_prix_min or filter_prix_max:
+            if filter_prix_min.isdecimal() and filter_prix_max.isdecimal():
+                if int(filter_prix_min) < int(filter_prix_max):
+                    if filter_types and filter_types != []:
+                        for case in filter_types:
+                            tuple = (case, filter_prix_min, filter_prix_max, f"%{filter_word}%")
+                            sql = ''' SELECT *
+                                      FROM boisson
+                                      WHERE type_boisson_id =%s AND prix BETWEEN %s AND %s AND nom LIKE %s;'''
+                            mycursor.execute(sql, tuple)
+                            boisson = mycursor.fetchall()
+                            if len(boisson) > 0:
+                                temp = temp + boisson
+                        session['filter_word'] = filter_word
+                        session['filter_prix_min'] = filter_prix_min
+                        session['filter_prix_max'] = filter_prix_max
+                        session['filter_types'] = filter_types
+                        get_db().commit()
+                        return render_template('client/boutique/panier_boisson.html', boissons=temp,
+                                               items_filtre=type_boisson)
+                    else:
+
+                        tuple = (f"%{filter_word}%", filter_prix_min, filter_prix_max)
+                        sql = ''' SELECT *
+                                      FROM boisson
+                                      WHERE prix BETWEEN %s AND %s AND nom LIKE %s;'''
+                        mycursor.execute(sql, tuple)
+                        boisson = mycursor.fetchall()
+                        session['filter_word'] = filter_word
+                        session['filter_prix_min'] = filter_prix_min
+                        session['filter_prix_max'] = filter_prix_max
+                        get_db().commit()
+                        return render_template('client/boutique/panier_boisson.html', boissons=boisson,
+                                               items_filtre=type_boisson)
+        else:
+            if filter_types and filter_types != []:
+                for case in filter_types:
+                    tuple = (case, f"%{filter_word}%")
+                    sql = '''SELECT *
+                                 FROM boisson
+                                 WHERE type_boisson_id =%s AND nom LIKE %s;'''
+                    mycursor.execute(sql, tuple)
+                    boisson = mycursor.fetchall()
+                    if len(boisson) > 0:
+                        temp = temp + boisson
+                session['filter_word'] = filter_word
+                session['filter_types'] = filter_types
+                get_db().commit()
+                return render_template('client/boutique/panier_boisson.html', boissons=temp,
+                                       items_filtre=type_boisson)
+            else:
+                tuple = (f"%{filter_word}%")
+                sql = '''SELECT *
+                         FROM boisson
+                         WHERE nom LIKE %s;'''
+                mycursor.execute(sql, tuple)
+                boisson = mycursor.fetchall()
+                session['filter_word'] = filter_word
+                get_db().commit()
+                return render_template('client/boutique/panier_boisson.html', boissons=boisson,
+                                       items_filtre=type_boisson)
+
+    if filter_prix_min or filter_prix_max:
+        if filter_prix_min.isdecimal() and filter_prix_max.isdecimal():
+            if int(filter_prix_min) < int(filter_prix_max):
+                if filter_types and filter_types != []:
+                    for case in filter_types:
+                        tuple = (case, filter_prix_min, filter_prix_max)
+                        sql = ''' SELECT *
+                                      FROM boisson
+                                      WHERE type_boisson_id =%s AND prix BETWEEN %s AND %s;'''
+                        mycursor.execute(sql, tuple)
+                        boisson = mycursor.fetchall()
+                        if len(boisson) > 0:
+                            temp = temp + boisson
+                    session['filter_prix_min'] = filter_prix_min
+                    session['filter_prix_max'] = filter_prix_max
+                    session['filter_types'] = filter_types
+                    get_db().commit()
+                    return render_template('client/boutique/panier_boisson.html', boissons=temp,
+                                           items_filtre=type_boisson)
+
+            else:
+                tuple = (filter_prix_min, filter_prix_max)
+                sql = '''SELECT *
+                             FROM boisson
+                             WHERE prix BETWEEN %s AND %s;'''
+                mycursor.execute(sql, tuple)
+                boisson = mycursor.fetchall()
+                session['filter_prix_min'] = filter_prix_min
+                session['filter_prix_max'] = filter_prix_max
+                get_db().commit()
+                return render_template('client/boutique/panier_boisson.html', boissons=boisson,
+                                       items_filtre=type_boisson)
+
+    if filter_types and filter_types != []:
+        for case in filter_types:
+            tuple = (case,)
+            sql = ''' SELECT *
+                      FROM boisson
+                      WHERE type_boisson_id = %s;'''
+            mycursor.execute(sql, tuple)
+            boisson = mycursor.fetchall()
+            if len(boisson) > 0:
+                temp = temp + boisson
+        session['filter_types'] = filter_types
+        get_db().commit()
+        return render_template('client/boutique/panier_boisson.html', boissons=temp, items_filtre=type_boisson)
 
     return redirect('/client/boisson/show')
 
@@ -181,4 +298,13 @@ def client_panier_filtre():
 @client_panier.route('/client/panier/filtre/suppr', methods=['POST'])
 def client_panier_filtre_suppr():
 
+    if 'filter_word' in session:
+        session.pop('filter_word')
+    if 'filter_prix_min' in session:
+        session.pop('filter_prix_min')
+    if 'filter_prix_max' in session:
+        session.pop('filter_prix_max')
+    if 'filter_types' in session:
+        session.pop('filter_types')
     return redirect('/client/boisson/show')
+
