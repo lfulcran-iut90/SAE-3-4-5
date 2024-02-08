@@ -2,6 +2,7 @@ DROP TABLE IF EXISTS ligne_panier;
 DROP TABLE IF EXISTS ligne_commande;
 DROP TABLE IF EXISTS commande;
 DROP TABLE IF EXISTS etat;
+DROP TABLE IF EXISTS adresse;
 DROP TABLE IF EXISTS utilisateur;
 DROP table if exists boisson;
 DROP table if exists type_boisson;
@@ -55,6 +56,17 @@ CREATE TABLE utilisateur (
     PRIMARY KEY (id_utilisateur)
 );
 
+CREATE TABLE adresse  (
+    id_adresse INT AUTO_INCREMENT,
+    nom_facturation VARCHAR(255) NOT NULL,
+    rue VARCHAR(255) NOT NULL,
+    code_postal INT NOT NULL,
+    ville VARCHAR(255),
+    utilisateur_id INT NOT NULL, 
+    PRIMARY KEY(id_adresse),
+    FOREIGN KEY (utilisateur_id) REFERENCES utilisateur(id_utilisateur)
+);
+
 CREATE TABLE etat (
     id_etat INT AUTO_INCREMENT,
     libelle VARCHAR(255) NOT NULL,
@@ -66,9 +78,11 @@ CREATE TABLE commande (
     date_achat DATE NOT NULL,
     utilisateur_id INT,
     etat_id INT,
+    adresse_id INT NOT NULL,
     PRIMARY KEY (id_commande),
     FOREIGN KEY fk_lb_r(utilisateur_id) REFERENCES utilisateur(id_utilisateur),
     FOREIGN KEY (etat_id) REFERENCES etat(id_etat)
+    FOREIGN KEY (adresse_id) REFERENCES adresse(id_adresse)
 );
 
 
@@ -91,6 +105,7 @@ CREATE TABLE ligne_panier (
     FOREIGN KEY (utilisateur_id) REFERENCES utilisateur(id_utilisateur),
     FOREIGN KEY (boisson_id) REFERENCES boisson(id_boisson)
 );
+
 
 
 
@@ -155,12 +170,21 @@ INSERT INTO utilisateur(id_utilisateur,login,email,password,role,nom) VALUES
     'sha256$MjhdGuDELhI82lKY$2161be4a68a9f236a27781a7f981a531d11fdc50e4112d912a7754de2dfa0422',
     'ROLE_client','client2');
 
+INSERT INTO adresse (nom_facturation, rue, code_postal, ville, utilisateur_id) VALUES
+('Facturation Client 1', '123 Main Street', 12345, 'City1', 2),
+('Facturation Client 2', '456 Oak Avenue', 56789, 'City2', 2),
+('Facturation Client 3', '789 Pine Lane', 90123, 'City3', 2),
+('Facturation Client2 1', '111 Elm Street', 11111, 'CityA', 3),
+('Facturation Client2 2', '222 Maple Avenue', 22222, 'CityB', 3),
+('Facturation Client2 3', '333 Cedar Lane', 33333, 'CityC', 3);
+
 
 INSERT INTO etat (libelle) VALUES
 ('En attente'),
 ('En cours de traitement'),
 ('Expédiée'),
 ('Annulée');
+
 
 
 
@@ -175,3 +199,6 @@ SELECT SUM(b.prix * quantite)
 FROM ligne_panier
 LEFT JOIN boisson b on ligne_panier.boisson_id = b.id_boisson;
 
+SELECT id_utilisateur
+FROM utilisateur
+WHERE login = 'admin' AND email = 'admin@admin.fr';

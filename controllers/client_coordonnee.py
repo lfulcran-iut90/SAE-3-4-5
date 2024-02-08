@@ -13,20 +13,40 @@ client_coordonnee = Blueprint('client_coordonnee', __name__,
 def client_coordonnee_show():
     mycursor = get_db().cursor()
     id_client = session['id_user']
-    utilisateur=[]
+    tuple = (id_client,)
+    sql = '''SELECT login, emailn nom
+             FROM utilsateur
+             WHERE id_utilisateur = %s;'''
+    mycursor.execute(sql, tuple)
+    utilisateur = mycursor.fetchone()
+
+    sql = '''
+            SELECT nom_facturation, rue, code_postal, ville, COUNT(nom_facturation) as nb_adresses
+            FROM adresse
+            WHERE utilisateur_id = %s;'''
+    mycursor.execute(sql, tuple)
+    adresses = mycursor.fetchall()
+    nb_adresses = adresses['nb_adresses']
+
     return render_template('client/coordonnee/show_coordonnee.html'
                            , utilisateur=utilisateur
-                         #  , adresses=adresses
-                         #  , nb_adresses=nb_adresses
+                           , adresses=adresses
+                           , nb_adresses=nb_adresses
                            )
 
 @client_coordonnee.route('/client/coordonnee/edit', methods=['GET'])
 def client_coordonnee_edit():
     mycursor = get_db().cursor()
     id_client = session['id_user']
+    tuple = (id_client,)
+    sql = '''SELECT login, emailn nom
+             FROM utilsateur
+             WHERE id_utilisateur = %s;'''
+    mycursor.execute(sql, tuple)
+    utilisateur = mycursor.fetchone()
 
     return render_template('client/coordonnee/edit_coordonnee.html'
-                           #,utilisateur=utilisateur
+                           ,utilisateur=utilisateur
                            )
 
 @client_coordonnee.route('/client/coordonnee/edit', methods=['POST'])
@@ -37,14 +57,24 @@ def client_coordonnee_edit_valide():
     login = request.form.get('login')
     email = request.form.get('email')
 
-    utilisateur = None
+    tuple = (email,)
+    sql = '''SELECT id_utilisateur
+             FROM utilsateur
+             WHERE email = %s OR nom = %s;'''
+    mycursor.execute(sql, tuple)
+    utilisateur = mycursor.fetchone()
+
     if utilisateur:
         flash(u'votre cet Email ou ce Login existe déjà pour un autre utilisateur', 'alert-warning')
         return render_template('client/coordonnee/edit_coordonnee.html'
-                               #, user=user
+                                , utilisateur = utilisateur
                                )
 
-
+    tuple = (nom, login, email, id_client)
+    sql = '''UPDATE utilisateur
+             SET nom = %s, login = %s, email = %s
+             WHERE id_utilisateur = %s;'''
+    mycursor.execute(sql, tuple)
     get_db().commit()
     return redirect('/client/coordonnee/show')
 
