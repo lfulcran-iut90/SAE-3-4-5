@@ -93,6 +93,14 @@ def auth_logout():
     session.pop('login', None)
     session.pop('role', None)
     session.pop('id_user', None)
+    if 'filter_word' in session:
+        session.pop('filter_word')
+    if 'filter_prix_min' in session:
+        session.pop('filter_prix_min')
+    if 'filter_prix_max' in session:
+        session.pop('filter_prix_max')
+    if 'filter_types' in session:
+        session.pop('filter_types')
     return redirect('/')
 
 @auth_security.route('/forget-password', methods=['GET'])
