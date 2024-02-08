@@ -325,5 +325,8 @@ SELECT *
 FROM commentaire
 WHERE id_utilisateur = 2 AND id_boisson = 2;
 
+SELECT *
+FROM commentaire;
+
 
 
