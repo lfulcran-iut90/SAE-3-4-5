@@ -302,14 +302,14 @@ def fct_fixtures_load():
     mycursor.execute(sql)
 
     sql = '''
-    INSERT INTO commentaire (id_boisson, id_utilisateur, commentaire, note, date_publication) VALUES
-        (1, 2, 'Excellent soda à la vanille, j\'adore le goût!', 5, '2022-06-27'),
-        (4, 2, 'Smoothie fraise-banane très savoureux, parfait pour le petit-déjeuner.', 5, '2022-06-27'),
-        (1, 2, 'Excellent soda à la vanille, j\'adore le goût!', 5, '2022-07-27'),
-        (4, 2, 'Smoothie fraise-banane très savoureux, parfait pour le petit-déjeuner.', 5, '2022-07-27'),
-        (1, 3, 'Excellent soda à la vanille, j\'adore le goût!', 5, '2022-06-24'),
-        (4, 3, 'Smoothie fraise-banane très savoureux, parfait pour le petit-déjeuner.', 5, '2022-06-24');
-    '''
+        INSERT INTO commentaire (id_boisson, id_utilisateur, commentaire, note, date_publication) VALUES
+            (1, 2, "Excellent soda à la vanille, j'adore le goût!", 5, '2022-06-27'),
+            (4, 2, 'Smoothie fraise-banane très savoureux, parfait pour le petit-déjeuner.', 5, '2022-06-27'),
+            (1, 2, "Excellent soda à la vanille, j'adore le goût!", 5, '2022-07-27'),
+            (4, 2, 'Smoothie fraise-banane très savoureux, parfait pour le petit-déjeuner.', 5, '2022-07-27'),
+            (1, 3, "Excellent soda à la vanille, j'adore le goût!", 5, '2022-06-24'),
+            (4, 3, 'Smoothie fraise-banane très savoureux, parfait pour le petit-déjeuner.', 5, '2022-06-24');
+        '''
 
     mycursor.execute(sql)
 
