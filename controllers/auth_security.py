@@ -73,7 +73,7 @@ def auth_signup_post():
     mycursor.execute(sql, tuple_insert)
     get_db().commit()
 
-    sql = """ SELECT *
+    sql = """ SELECT LAST_INSERT_ID() AS last_insert_id
               FROM utilisateur;  """
     mycursor.execute(sql)
     info_last_id = mycursor.fetchone()

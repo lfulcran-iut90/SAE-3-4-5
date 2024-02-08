@@ -18,43 +18,58 @@ def client_boisson_details():
     id_client = session['id_user']
 
     ## partie 4
-    # client_historique_add(id_boisson, id_client)
+    client_historique_add(id_boisson, id_client)
 
     sql = '''
+        SELECT *
+        FROM boisson
+        WHERE id_boisson = %s;
     '''
-    #mycursor.execute(sql, id_boisson)
-    #boisson = mycursor.fetchone()
-    boisson=[]
+    mycursor.execute(sql, id_boisson)
+    boisson = mycursor.fetchone()
     commandes_boissons=[]
-    nb_commentaires=[]
+
+
     if boisson is None:
         abort(404, "pb id boisson")
-    # sql = '''
-    #
-    # '''
-    # mycursor.execute(sql, ( id_boisson))
-    # commentaires = mycursor.fetchall()
-    # sql = '''
-    # '''
-    # mycursor.execute(sql, (id_client, id_boisson))
-    # commandes_boissons = mycursor.fetchone()
-    # sql = '''
-    # '''
-    # mycursor.execute(sql, (id_client, id_boisson))
-    # note = mycursor.fetchone()
-    # print('note',note)
-    # if note:
-    #     note=note['note']
-    # sql = '''
+    sql = '''
+        SELECT *
+        FROM commentaire
+        INNER JOIN utilisateur u on commentaire.id_utilisateur = u.id_utilisateur
+        WHERE id_boisson = %s;
+        '''
+    mycursor.execute(sql, ( id_boisson))
+    commentaires = mycursor.fetchall()
+    nb_commentaires = len(commentaires)
+    sql = '''
+        SELECT COUNT(id_commande) as nb_commandes_boisson
+        FROM ligne_commande
+        INNER JOIN commande c on ligne_commande.commande_id = c.id_commande
+        WHERE utilisateur_id = %s AND boisson_id = %s;
+    '''
+    mycursor.execute(sql, (id_client, id_boisson))
+    commandes_boissons = mycursor.fetchone()
+
+    sql = '''
+        SELECT note
+        FROM commentaire
+        WHERE id_utilisateur = %s AND id_boisson = %s;
+    '''
+    mycursor.execute(sql, (id_client, id_boisson))
+    note = mycursor.fetchone()
+    print('note',note)
+    if note:
+        note = note['note']
+    sql = '''
     # '''
     # mycursor.execute(sql, (id_client, id_boisson))
     # nb_commentaires = mycursor.fetchone()
     return render_template('client/boisson_info/boisson_details.html'
                            , boisson=boisson
-                           # , commentaires=commentaires
+                           , commentaires=commentaires
                            , commandes_boissons=commandes_boissons
-                           # , note=note
-                            , nb_commentaires=nb_commentaires
+                           , note=note
+                           , nb_commentaires=nb_commentaires
                            )
 
 @client_commentaire.route('/client/commentaire/add', methods=['POST'])

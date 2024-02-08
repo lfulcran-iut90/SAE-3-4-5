@@ -20,10 +20,16 @@ def client_boisson_show():                                 # remplace client_ind
     # utilisation du filtre
     sql3=''' prise en compte des commentaires et des notes dans le SQL    '''
 
-    sql = '''SELECT *
-            FROM boisson;'''
+    sql = '''SELECT boisson.id_boisson, nom, prix, volume, arome_id, conditionnement_id, type_boisson_id, description, fournisseur, marque, stock, image, le.id_boisson as liste_boissons
+             FROM boisson
+             LEFT JOIN liste_envie le on boisson.id_boisson = le.id_boisson;'''
     mycursor.execute(sql)
     boissons = mycursor.fetchall()
+    for liste in boissons:
+        if liste['id_boisson'] == liste['liste_boissons']:
+            liste['liste_envie'] = 1
+        else :
+            liste['liste_envie'] = 0
 
 
     # pour le filtre

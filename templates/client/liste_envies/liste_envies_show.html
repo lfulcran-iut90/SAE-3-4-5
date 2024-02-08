@@ -118,8 +118,7 @@ boissons (tableau de dictionnaires)
                                 <a href="/client/boisson/details?id_boisson={{ boisson.id_boisson }}" >
                                 <h3 class="card-title">
                                     <span style="color: #0b2e13">{{ boisson.nom }}</span><br>
-                                    {{ boisson.prix }}
-                                    €
+                                    {{ boisson.prix }}€
                                 </h3>
                                      {%  if boisson.image is not none %}
                                         <img class="card-img-top rounded mx-auto d-block"  style="width:100px;height:100px"  src="{{ url_for('static', filename = 'images/')}}{{ boisson.image }}"  alt="image  de {{ boisson.nom }}" >

@@ -36,10 +36,10 @@ def client_panier_add():
     #                                , quantite=quantite
     #                                , boisson=boisson)
 
-    tuple =(id_boisson,)
+    tuple =(id_boisson, id_client)
     sql = '''SELECT boisson_id
              FROM ligne_panier
-             WHERE boisson_id = %s;'''
+             WHERE boisson_id = %s AND utilisateur_id = %s;'''
     mycursor.execute(sql, tuple)
     boissonPresent = mycursor.fetchone()
 
@@ -65,7 +65,6 @@ def client_panier_add():
     mycursor.execute(sql, tuple)
     get_db().commit()
 
-# ajout dans le panier d'une boisson
 
 
     return redirect('/client/boisson/show')

@@ -1,13 +1,17 @@
-DROP TABLE IF EXISTS ligne_panier;
-DROP TABLE IF EXISTS ligne_commande;
-DROP TABLE IF EXISTS commande;
-DROP TABLE IF EXISTS etat;
-DROP TABLE IF EXISTS adresse;
-DROP TABLE IF EXISTS utilisateur;
-DROP table if exists boisson;
-DROP table if exists type_boisson;
-DROP table if exists conditionnement;
-DROP table if exists arome;
+DROP TABLE IF EXISTS
+    commentaire,
+    historique,
+    liste_envie,
+    ligne_panier,
+    ligne_commande,
+    commande,
+    etat,
+    adresse,
+    utilisateur,
+    boisson,
+    type_boisson,
+    conditionnement,
+    arome;
 
 
 
@@ -62,7 +66,8 @@ CREATE TABLE adresse  (
     rue VARCHAR(255) NOT NULL,
     code_postal INT NOT NULL,
     ville VARCHAR(255),
-    utilisateur_id INT NOT NULL, 
+    utilisateur_id INT NOT NULL,
+    valide BOOLEAN NOT NULL DEFAULT true,
     PRIMARY KEY(id_adresse),
     FOREIGN KEY (utilisateur_id) REFERENCES utilisateur(id_utilisateur)
 );
@@ -78,11 +83,13 @@ CREATE TABLE commande (
     date_achat DATE NOT NULL,
     utilisateur_id INT,
     etat_id INT,
-    adresse_id INT NOT NULL,
+    adresse_livraison INT NOT NULL,
+    adresse_facturation INT NOT NULL,
     PRIMARY KEY (id_commande),
     FOREIGN KEY fk_lb_r(utilisateur_id) REFERENCES utilisateur(id_utilisateur),
-    FOREIGN KEY (etat_id) REFERENCES etat(id_etat)
-    FOREIGN KEY (adresse_id) REFERENCES adresse(id_adresse)
+    FOREIGN KEY (etat_id) REFERENCES etat(id_etat),
+    FOREIGN KEY (adresse_livraison) REFERENCES adresse(id_adresse),
+    FOREIGN KEY (adresse_facturation) REFERENCES adresse(id_adresse)
 );
 
 
@@ -104,6 +111,35 @@ CREATE TABLE ligne_panier (
     PRIMARY KEY (utilisateur_id, boisson_id),
     FOREIGN KEY (utilisateur_id) REFERENCES utilisateur(id_utilisateur),
     FOREIGN KEY (boisson_id) REFERENCES boisson(id_boisson)
+);
+
+CREATE TABLE liste_envie(
+    id_boisson INT NOT NULL,
+    id_utilisateur INT NOT NULL ,
+    PRIMARY KEY (id_boisson,id_utilisateur),
+    FOREIGN KEY (id_utilisateur) REFERENCES utilisateur(id_utilisateur),
+    FOREIGN KEY (id_boisson) REFERENCES boisson(id_boisson)
+);
+
+CREATE TABLE historique(
+    id_boisson INT NOT NULL,
+    id_utilisateur INT NOT NULL,
+    colonne_ordre INT NOT NULL,
+    PRIMARY KEY (id_boisson,id_utilisateur),
+    FOREIGN KEY (id_utilisateur) REFERENCES utilisateur(id_utilisateur),
+    FOREIGN KEY (id_boisson) REFERENCES boisson(id_boisson)
+);
+
+CREATE TABLE commentaire(
+    id_commentaire INT AUTO_INCREMENT NOT NULL,
+    id_boisson INT NOT NULL,
+    id_utilisateur INT NOT NULL,
+    commentaire VARCHAR(999),
+    note int,
+    date_publication DATE,
+    PRIMARY KEY (id_commentaire),
+    FOREIGN KEY (id_utilisateur) REFERENCES utilisateur(id_utilisateur),
+    FOREIGN KEY (id_boisson) REFERENCES boisson(id_boisson)
 );
 
 
@@ -170,13 +206,13 @@ INSERT INTO utilisateur(id_utilisateur,login,email,password,role,nom) VALUES
     'sha256$MjhdGuDELhI82lKY$2161be4a68a9f236a27781a7f981a531d11fdc50e4112d912a7754de2dfa0422',
     'ROLE_client','client2');
 
-INSERT INTO adresse (nom_facturation, rue, code_postal, ville, utilisateur_id) VALUES
-('Facturation Client 1', '123 Main Street', 12345, 'City1', 2),
-('Facturation Client 2', '456 Oak Avenue', 56789, 'City2', 2),
-('Facturation Client 3', '789 Pine Lane', 90123, 'City3', 2),
-('Facturation Client2 1', '111 Elm Street', 11111, 'CityA', 3),
-('Facturation Client2 2', '222 Maple Avenue', 22222, 'CityB', 3),
-('Facturation Client2 3', '333 Cedar Lane', 33333, 'CityC', 3);
+INSERT INTO adresse (nom_facturation, rue, code_postal, ville, utilisateur_id, valide) VALUES
+('Client 1', '123 Main Street', 12345, 'City1', 2, true),
+('Client 2', '456 Oak Avenue', 56789, 'City2', 2, false),
+('Client 3', '789 Pine Lane', 90123, 'City3', 2, true),
+('Client2 1', '111 Elm Street', 11111, 'CityA', 3, true),
+('Client2 2', '222 Maple Avenue', 22222, 'CityB', 3, true),
+('Client2 3', '333 Cedar Lane', 33333, 'CityC', 3, true);
 
 
 INSERT INTO etat (libelle) VALUES
@@ -185,7 +221,30 @@ INSERT INTO etat (libelle) VALUES
 ('Expédiée'),
 ('Annulée');
 
+INSERT INTO commande(date_achat,utilisateur_id, etat_id, adresse_livraison,adresse_facturation) VALUES
+('2022-06-27', 2, 2, 1,1),
+('2022-07-27', 2, 2, 2,2),
+('2022-06-24', 3, 2, 5,5),
+('2022-06-24', 3, 3, 4,4);
 
+INSERT INTO ligne_commande(commande_id, boisson_id, prix, quantite) VALUES
+(1,1,2.5, 5),
+(1, 4,4.5,2),
+(2,1,2.5, 5),
+(2, 4,4.5,2),
+(3,1,2.5, 5),
+(3, 4,4.5,2),
+(4,1,2.5, 5),
+(4, 4,4.5,2);
+
+
+INSERT INTO commentaire (id_boisson, id_utilisateur, commentaire, note, date_publication) VALUES
+(1, 2, 'Excellent soda à la vanille, j\'adore le goût!', 5, '2022-06-27'),
+(4, 2, 'Smoothie fraise-banane très savoureux, parfait pour le petit-déjeuner.', 5, '2022-06-27'),
+(1, 2, 'Excellent soda à la vanille, j\'adore le goût!', 5, '2022-07-27'),
+(4, 2, 'Smoothie fraise-banane très savoureux, parfait pour le petit-déjeuner.', 5, '2022-07-27'),
+(1, 3, 'Excellent soda à la vanille, j\'adore le goût!', 5, '2022-06-24'),
+(4, 3, 'Smoothie fraise-banane très savoureux, parfait pour le petit-déjeuner.', 5, '2022-06-24');
 
 
 
@@ -202,3 +261,69 @@ LEFT JOIN boisson b on ligne_panier.boisson_id = b.id_boisson;
 SELECT id_utilisateur
 FROM utilisateur
 WHERE login = 'admin' AND email = 'admin@admin.fr';
+
+SELECT nom_facturation, rue, code_postal, ville
+FROM adresse
+WHERE utilisateur_id = 2;
+
+SELECT COUNT(id_adresse)
+FROM adresse
+WHERE utilisateur_id =2;
+
+SELECT *
+FROM commande
+WHERE utilisateur_id = 2 AND (adresse_livraison = 1 OR adresse_facturation = 1);
+
+SELECT id_commande,date_achat,utilisateur_id, e.libelle, SUM(lc.prix * lc.quantite) AS prix_total , etat_id, SUM(quantite) AS nbr_boissons
+FROM commande
+LEFT JOIN ligne_commande lc on commande.id_commande = lc.commande_id
+LEFT JOIN etat e on e.id_etat = commande.etat_id
+WHERE commande.utilisateur_id = 2
+GROUP BY id_commande;
+
+SELECT id_commande, b.prix as prix, lc.prix as prix_ligne,quantite,b.nom
+FROM commande
+LEFT JOIN ligne_commande lc on commande.id_commande = lc.commande_id
+LEFT JOIN boisson b on lc.boisson_id = b.id_boisson
+WHERE utilisateur_id = 2 AND id_commande = 1;
+
+SELECT a.nom_facturation, a.rue AS rue_facturation, a.ville AS ville_facturation, a.code_postal AS code_postal_facturation,
+       a2.nom_facturation as nom_livraison, a2.rue AS rue_livraison, a2.ville AS ville_livraison, a2.code_postal AS code_postal_livraison
+FROM commande
+LEFT JOIN adresse a on a.id_adresse = commande.adresse_facturation
+LEFT JOIN adresse a2 on a2.id_adresse = commande.adresse_livraison
+WHERE commande.utilisateur_id = 2 AND id_commande = 1;
+
+SELECT utilisateur_id, boisson_id, quantite, date_ajout, id_boisson, nom, prix, volume, arome_id, conditionnement_id, type_boisson_id, description, fournisseur, marque, stock, image
+FROM ligne_panier
+LEFT JOIN boisson b on b.id_boisson = ligne_panier.boisson_id
+WHERE utilisateur_id = 2;
+
+SELECT utilisateur_id, boisson_id, quantite, date_ajout, b.prix
+FROM ligne_panier
+LEFT JOIN boisson b on b.id_boisson = ligne_panier.boisson_id
+WHERE utilisateur_id = 1;
+
+SELECT *
+FROM ligne_panier;
+
+SELECT boisson.id_boisson, nom, prix, volume, arome_id, conditionnement_id, type_boisson_id, description, fournisseur, marque, stock, image, le.id_boisson as liste_boissons
+FROM boisson
+LEFT JOIN liste_envie le on boisson.id_boisson = le.id_boisson;
+
+SELECT liste_envie.id_boisson, id_utilisateur, b.id_boisson, b.nom, stock, prix, image
+FROM liste_envie
+LEFT JOIN boisson b on b.id_boisson = liste_envie.id_boisson
+WHERE id_utilisateur = 2;
+
+SELECT COUNT(id_commande) as nb_commandes_boisson
+FROM ligne_commande
+INNER JOIN commande c on ligne_commande.commande_id = c.id_commande
+WHERE utilisateur_id = 2 AND boisson_id = 2;
+
+SELECT *
+FROM commentaire
+WHERE id_utilisateur = 2 AND id_boisson = 2;
+
+
+

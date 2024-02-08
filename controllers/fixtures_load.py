@@ -11,7 +11,10 @@ fixtures_load = Blueprint('fixtures_load', __name__,
 @fixtures_load.route('/base/init')
 def fct_fixtures_load():
     mycursor = get_db().cursor()
-    sql='''DROP TABLE IF EXISTS ligne_panier, 
+    sql='''DROP TABLE IF EXISTS commentaire,
+                                historique,
+                                liste_envie,
+                                ligne_panier, 
                                 ligne_commande, 
                                 commande, 
                                 etat,
@@ -165,20 +168,21 @@ def fct_fixtures_load():
         rue VARCHAR(255) NOT NULL,
         code_postal INT NOT NULL,
         ville VARCHAR(255),
-        utilisateur_id INT NOT NULL, 
+        utilisateur_id INT NOT NULL,
+        valide BOOLEAN NOT NULL DEFAULT true,
         PRIMARY KEY(id_adresse),
         FOREIGN KEY (utilisateur_id) REFERENCES utilisateur(id_utilisateur)
     );'''
     mycursor.execute(sql)
 
     sql = '''
-    INSERT INTO adresse (nom_facturation, rue, code_postal, ville, utilisateur_id) VALUES
-        ('Facturation Client 1', '123 Main Street', 12345, 'City1', 2),
-        ('Facturation Client 2', '456 Oak Avenue', 56789, 'City2', 2),
-        ('Facturation Client 3', '789 Pine Lane', 90123, 'City3', 2),
-        ('Facturation Client2 1', '111 Elm Street', 11111, 'CityA', 3),
-        ('Facturation Client2 2', '222 Maple Avenue', 22222, 'CityB', 3),
-        ('Facturation Client2 3', '333 Cedar Lane', 33333, 'CityC', 3);
+    INSERT INTO adresse (nom_facturation, rue, code_postal, ville, utilisateur_id, valide) VALUES
+        ('Client 1', '123 Main Street', 12345, 'City1', 2, true),
+        ('Client 2', '456 Oak Avenue', 56789, 'City2', 2, false),
+        ('Client 3', '789 Pine Lane', 90123, 'City3', 2, true),
+        ('Client2 1', '111 Elm Street', 11111, 'CityA', 3, true),
+        ('Client2 2', '222 Maple Avenue', 22222, 'CityB', 3, true),
+        ('Client2 3', '333 Cedar Lane', 33333, 'CityC', 3, true);
     '''
     mycursor.execute(sql)
 
@@ -206,10 +210,23 @@ def fct_fixtures_load():
         date_achat DATE NOT NULL,
         utilisateur_id INT,
         etat_id INT,
+        adresse_livraison INT NOT NULL,
+        adresse_facturation INT NOT NULL,
         PRIMARY KEY (id_commande),
         FOREIGN KEY fk_lb_r(utilisateur_id) REFERENCES utilisateur(id_utilisateur),
-        FOREIGN KEY (etat_id) REFERENCES etat(id_etat)
-    ); '''
+        FOREIGN KEY (etat_id) REFERENCES etat(id_etat),
+        FOREIGN KEY (adresse_livraison) REFERENCES adresse(id_adresse),
+        FOREIGN KEY (adresse_facturation) REFERENCES adresse(id_adresse)
+    );'''
+    mycursor.execute(sql)
+
+    sql = '''
+    INSERT INTO commande(date_achat,utilisateur_id, etat_id, adresse_livraison,adresse_facturation) VALUES
+        ('2022-06-27', 2, 2, 1,1),
+        ('2022-07-27', 2, 2, 2,2),
+        ('2022-06-24', 3, 2, 5,5),
+        ('2022-06-24', 3, 3, 4,4);
+    '''
     mycursor.execute(sql)
 
     sql = '''
@@ -224,6 +241,19 @@ def fct_fixtures_load():
     );'''
     mycursor.execute(sql)
 
+    sql = '''
+    INSERT INTO ligne_commande(commande_id, boisson_id, prix, quantite) VALUES
+        (1,1,2.5, 5),
+        (1, 4,4.5,2),
+        (2,1,2.5, 5),
+        (2, 4,4.5,2),
+        (3,1,2.5, 5),
+        (3, 4,4.5,2),
+        (4,1,2.5, 5),
+        (4, 4,4.5,2);
+    '''
+    mycursor.execute(sql)
+
     sql = ''' 
     CREATE TABLE ligne_panier (
         utilisateur_id INT,
@@ -236,6 +266,52 @@ def fct_fixtures_load():
     );'''
     mycursor.execute(sql)
 
+    sql = '''
+    CREATE TABLE liste_envie(
+        id_boisson INT NOT NULL,
+        id_utilisateur INT NOT NULL ,
+        PRIMARY KEY (id_boisson,id_utilisateur),
+        FOREIGN KEY (id_utilisateur) REFERENCES utilisateur(id_utilisateur),
+        FOREIGN KEY (id_boisson) REFERENCES boisson(id_boisson)
+    );'''
+    mycursor.execute(sql)
+
+    sql = '''
+    CREATE TABLE historique(
+        id_boisson INT NOT NULL,
+        id_utilisateur INT NOT NULL,
+        colonne_ordre INT NOT NULL,
+        PRIMARY KEY (id_boisson,id_utilisateur),
+        FOREIGN KEY (id_utilisateur) REFERENCES utilisateur(id_utilisateur),
+        FOREIGN KEY (id_boisson) REFERENCES boisson(id_boisson)
+    );'''
+    mycursor.execute(sql)
+
+    sql = '''
+    CREATE TABLE commentaire(
+        id_commentaire INT AUTO_INCREMENT NOT NULL,
+        id_boisson INT NOT NULL,
+        id_utilisateur INT NOT NULL,
+        commentaire VARCHAR(999),
+        note int,
+        date_publication DATE,
+        PRIMARY KEY (id_commentaire),
+        FOREIGN KEY (id_utilisateur) REFERENCES utilisateur(id_utilisateur),
+        FOREIGN KEY (id_boisson) REFERENCES boisson(id_boisson)
+    );'''
+    mycursor.execute(sql)
+
+    sql = '''
+    INSERT INTO commentaire (id_boisson, id_utilisateur, commentaire, note, date_publication) VALUES
+        (1, 2, 'Excellent soda à la vanille, j\'adore le goût!', 5, '2022-06-27'),
+        (4, 2, 'Smoothie fraise-banane très savoureux, parfait pour le petit-déjeuner.', 5, '2022-06-27'),
+        (1, 2, 'Excellent soda à la vanille, j\'adore le goût!', 5, '2022-07-27'),
+        (4, 2, 'Smoothie fraise-banane très savoureux, parfait pour le petit-déjeuner.', 5, '2022-07-27'),
+        (1, 3, 'Excellent soda à la vanille, j\'adore le goût!', 5, '2022-06-24'),
+        (4, 3, 'Smoothie fraise-banane très savoureux, parfait pour le petit-déjeuner.', 5, '2022-06-24');
+    '''
+
+    mycursor.execute(sql)
 
     get_db().commit()
     return redirect('/')

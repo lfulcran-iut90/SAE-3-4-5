@@ -37,9 +37,11 @@
             </thead>
             <tbody>
                 {% for adresse in adresses %}
-                    <tr {% if adresse.valide is defined and adresse.valide==0 %} style="color: darkorange"{% endif %}>
+                    <tr {% if adresse.valide is defined and adresse.valide==0 %}
+                            style="color: darkorange"
+                        {% endif %}>
 
-                        <td>{{ adresse.nom }}-{{ adresse.valide}}</td>
+                        <td>{{ adresse.nom_facturation }}-{{ adresse.valide}}</td>
                         <td>{{ adresse.rue }}</td>
                         <td>{{ adresse.code_postal }}</td>
                         <td>{{ adresse.ville }}</td>

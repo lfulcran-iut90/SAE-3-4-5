@@ -20,7 +20,7 @@
                                  selected
                              {% endif %}
 
-                             >{{ adresse.nom }} ({{ adresse.code_postal }})
+                             >{{ adresse.nom_facturation }} ({{ adresse.code_postal }})
                                  {{ adresse.ville }} - {{ adresse.rue }}
                              {% if id_adresse_fav != 0 and id_adresse_fav == adresse.id_adresse %}
                                  (f)
@@ -41,7 +41,7 @@
                              {% if id_adresse_fav != 0 and id_adresse_fav == adresse.id_adresse %}
                                  selected
                              {% endif %}
-                             >{{ adresse.nom }} ({{ adresse.code_postal }})
+                             >{{ adresse.nom_facturation }} ({{ adresse.code_postal }})
                                  {{ adresse.ville }} - {{ adresse.rue }}
                              </option>
                         {% endfor %}
