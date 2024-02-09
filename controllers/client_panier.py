@@ -264,18 +264,18 @@ def client_panier_filtre():
                     return render_template('client/boutique/panier_boisson.html', boissons=temp,
                                            items_filtre=type_boisson)
 
-            else:
-                tuple = (filter_prix_min, filter_prix_max)
-                sql = '''SELECT *
-                             FROM boisson
-                             WHERE prix BETWEEN %s AND %s;'''
-                mycursor.execute(sql, tuple)
-                boisson = mycursor.fetchall()
-                session['filter_prix_min'] = filter_prix_min
-                session['filter_prix_max'] = filter_prix_max
-                get_db().commit()
-                return render_template('client/boutique/panier_boisson.html', boissons=boisson,
-                                       items_filtre=type_boisson)
+                else:
+                    tuple = (filter_prix_min, filter_prix_max)
+                    sql = '''SELECT *
+                                 FROM boisson
+                                 WHERE prix BETWEEN %s AND %s;'''
+                    mycursor.execute(sql, tuple)
+                    boisson = mycursor.fetchall()
+                    session['filter_prix_min'] = filter_prix_min
+                    session['filter_prix_max'] = filter_prix_max
+                    get_db().commit()
+                    return render_template('client/boutique/panier_boisson.html', boissons=boisson,
+                                           items_filtre=type_boisson)
 
     if filter_types and filter_types != []:
         for case in filter_types:

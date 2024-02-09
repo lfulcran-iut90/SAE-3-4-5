@@ -1,5 +1,9 @@
 .idea
 .gitignore
+<<<<<<< HEAD
 pycache
+=======
+__pycache__
+>>>>>>> cb594ad5421476e8f01b4b94f857d01574b31db1
 .git
 .env

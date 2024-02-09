@@ -42,9 +42,9 @@ def fct_fixtures_load():
         (2, 'Fraise'),
         (3, 'Citron'),
         (4, 'Menthe'),
-        (5, 'Chocolat'),
+        (5, 'Pomme'),
         (6, 'Amande'),
-        (7, 'Lait'),
+        (7, 'Pêche'),
         (8, 'Nature'),
         (9, 'Fruit Rouge'),
         (10, 'Orange');
@@ -113,25 +113,25 @@ def fct_fixtures_load():
 
     sql = ''' 
     INSERT INTO boisson (nom, prix, volume, arome_id, conditionnement_id, type_boisson_id, description, fournisseur, marque, stock, image) VALUES
-        ('Soda à la vanille', 2.5, 500, 1, 1, 1, 'Boisson gazeuse à la vanille', 'ABC Company', 'SodaMaster',80, 'soda_vanille.jpg'),
-        ('Jus de fraise', 3.0, 250, 2, 2, 2, 'Jus naturel de fraise', 'XYZ Juice Co.', 'FreshFruit',70, 'JusFraise.jpg'),
-        ('Eau gazeuse citron', 1.0, 750, 3, 3, 3, 'Eau gazeuse au citron rafraîchissante', 'Aqua Ltd.','CitrusSplash',74, 'EauGazCitron.jpg'),
-        ('Fraise-Banane Smoothie', 4.5, 400, 2, 1, 4, 'Smoothie rafraîchissant à la fraise et à la banane', 'SmoothieHeaven', 'BerryBanana',8, 'SmoothieFraiseBanane.jpg'),
-        ('Eau de source naturelle', 0.75, 1000, 6, 3, 5, 'Eau pure et naturelle', 'SourcePure', 'ClearSpring', 15,'EauSource.jpg'),
-        ('Camomille Infusion', 1.8, 250, 4, 1, 6, 'Infusion apaisante à la camomille', 'HerbalTeas', 'CalmingChamomile', 120,'CamomilleInfusion.jpg'),
-        ('Limonade pétillante', 2.2, 500, 3, 2, 3, 'Limonade rafraîchissante et pétillante', 'FizzDrinks', 'SparkleLemonade', 70,'LimonadePetillante.jpg'),
-        ('Boisson énergisante aux fruits rouges', 2.9, 330, 7, 2, 7, 'Boisson énergisante aux saveurs de fruits rouges', 'EnergyBoost', 'BerryCharge',77, 'BoissonFruitRouge.jpg'),
-        ("Jus d'orange frais pressé", 3.2, 300, 8, 1, 2, "Jus d 'orange fraîchement pressé", 'CitrusHarvest', 'FreshSqueeze',111, 'Orange.jpg'),
-        ('Eau aromatisée à la fraise', 1.5, 600, 2, 3, 8, 'Eau infusée à la fraise pour une saveur légère', 'FruitInfusions', 'StrawberrySplash',45, 'EauFraise.png'),
-        ('Jus de pêche', 2.8, 350, 9, 1, 2, 'Jus naturel de pêche', 'FruitHarvest', 'PeachyDelight', 23,'JusPeche.jpg'),
-        ('Eau aromatisée à la pomme', 1.4, 500, 10, 3, 8, 'Eau infusée à la pomme pour une saveur fruitée', 'FruitInfusions', 'AppleBurst', 25,'EauPomme.png'),
-        ('Smoothie pomme-kiwi', 4.0, 450, 4, 3, 4, 'Smoothie rafraîchissant à la pomme et au kiwi', 'SmoothieHeaven', 'MintyFresh', 65,'SmoothiePommeKiwi.jpg'),
-        ("Soda à l\'orange", 2.3, 500, 8, 2, 1, "Boisson gazeuse à l'orange pétillante", 'ABC Company', 'OrangeFizz', 62,'SodaOrange.jpg'),
-        ('Infusion de fruits rouges', 1.7, 300, 7, 1, 6, 'Infusion délicieuse de fruits rouges', 'HerbalTeas', 'BerryInfusion', 98,'InfusionFruitRouge.jpg'),
-        ('Jus de pomme', 2.0, 300, 10, 3, 2, 'Jus naturel de pomme', 'FruitHarvest', 'AppleFresh', 12,'JusPomme.jpg'),
-        ('Eau gazeuse à la menthe', 1.2, 500, 4, 3, 3, 'Eau gazeuse à la menthe rafraîchissante', 'Aqua Ltd.', 'MintSplash', 63,'EauGazMenthe.jpg'),
-        ('Jus aux fruits rouges', 2.0, 300, 4, 3, 2, 'Jus naturel à la framboise, aux cassis avec une touche de pommes', 'XYZ Juice Co.', 'CoolMintJuice', 98,'JusFruitsRouges.jpg'),
-        ('Boisson énergisante menthe-citron', 3.5, 330, 4, 2, 7, "Boisson énergisante revigorante à l'arôme de menthe et aux citrons", 'EnergyBoost', 'MintEnergy', 45,'BoissonEnergisanteMentheCitron.jpg'); 
+('Soda à la vanille', 2.5, 500, 1, 1, 1, 'Boisson gazeuse à la vanille', 'ABC Company', 'SodaMaster',80, 'soda_vanille.jpg'),
+('Jus de fraise', 3.0, 250, 2, 2, 2, 'Jus naturel de fraise', 'XYZ Juice Co.', 'FreshFruit',70, 'JusFraise.jpg'),
+('Eau gazeuse citron', 1.0, 750, 3, 3, 3, 'Eau gazeuse au citron rafraîchissante', 'Aqua Ltd.','CitrusSplash',74, 'EauGazCitron.jpg'),
+('Fraise-Banane Smoothie', 4.5, 400, 2, 1, 4, 'Smoothie rafraîchissant à la fraise et à la banane', 'SmoothieHeaven', 'BerryBanana',8, 'SmoothieFraiseBanane.jpg'),
+('Eau de source naturelle', 0.75, 1000, 8, 3, 5, 'Eau pure et naturelle', 'SourcePure', 'ClearSpring', 15,'EauSource.jpg'),
+('Camomille Infusion', 1.8, 250, 4, 1, 6, 'Infusion apaisante à la camomille', 'HerbalTeas', 'CalmingChamomile', 120,'CamomilleInfusion.jpg'),
+('Limonade pétillante', 2.2, 500, 3, 2, 3, 'Limonade rafraîchissante et pétillante', 'FizzDrinks', 'SparkleLemonade', 70,'LimonadePetillante.jpg'),
+('Boisson énergisante aux fruits rouges', 2.9, 330, 9, 2, 7, 'Boisson énergisante aux saveurs de fruits rouges', 'EnergyBoost', 'BerryCharge',77, 'BoissonFruitRouge.jpg'),
+("Jus d'orange frais pressé", 3.2, 300, 10, 1, 2, "Jus d'orange fraîchement pressé", 'CitrusHarvest', 'FreshSqueeze',111, 'Orange.jpg'),
+('Eau aromatisée à la fraise', 1.5, 600, 2, 3, 8, 'Eau infusée à la fraise pour une saveur légère', 'FruitInfusions', 'StrawberrySplash',45, 'EauFraise.png'),
+('Jus de pêche', 2.8, 350, 7, 1, 2, 'Jus naturel de pêche', 'FruitHarvest', 'PeachyDelight', 23,'JusPeche.jpg'),
+('Eau aromatisée à la pomme', 1.4, 500, 5, 3, 8, 'Eau infusée à la pomme pour une saveur fruitée', 'FruitInfusions', 'AppleBurst', 25,'EauPomme.png'),
+('Smoothie pomme-kiwi', 4.0, 450, 5, 3, 4, 'Smoothie rafraîchissant à la pomme et au kiwi', 'SmoothieHeaven', 'MintyFresh', 65,'SmoothiePommeKiwi.jpg'),
+("Soda à l'orange", 2.3, 500, 10, 2, 1, "Boisson gazeuse à l'orange pétillante", 'ABC Company', 'OrangeFizz', 62,'SodaOrange.jpg'),
+('Infusion de fruits rouges', 1.7, 300, 9, 1, 6, 'Infusion délicieuse de fruits rouges', 'HerbalTeas', 'BerryInfusion', 98,'InfusionFruitRouge.jpg'),
+('Jus de pomme', 2.0, 300, 5, 3, 2, 'Jus naturel de pomme', 'FruitHarvest', 'AppleFresh', 12,'JusPomme.jpg'),
+('Eau gazeuse à la menthe', 1.2, 500, 4, 3, 3, 'Eau gazeuse à la menthe rafraîchissante', 'Aqua Ltd.', 'MintSplash', 63,'EauGazMenthe.jpg'),
+('Jus aux fruits rouges', 2.0, 300, 9, 3, 2, 'Jus naturel à la framboise, aux cassis avec une touche de pommes', 'XYZ Juice Co.', 'CoolMintJuice', 98,'JusFruitsRouges.jpg'),
+('Boisson énergisante menthe-citron', 3.5, 330, 4, 2, 7, "Boisson énergisante revigorante à l'arôme de menthe et aux citrons", 'EnergyBoost', 'MintEnergy', 45,'BoissonEnergisanteMentheCitron.jpg');
     '''
 
     mycursor.execute(sql)
@@ -302,14 +302,14 @@ def fct_fixtures_load():
     mycursor.execute(sql)
 
     sql = '''
-    INSERT INTO commentaire (id_boisson, id_utilisateur, commentaire, note, date_publication) VALUES
-        (1, 2, "Excellent soda à la vanille, j'adore le goût!", 5, '2022-06-27'),
-        (4, 2, 'Smoothie fraise-banane très savoureux, parfait pour le petit-déjeuner.', 5, '2022-06-27'),
-        (1, 2, "Excellent soda à la vanille, j'adore le goût!", 5, '2022-07-27'),
-        (4, 2, 'Smoothie fraise-banane très savoureux, parfait pour le petit-déjeuner.', 5, '2022-07-27'),
-        (1, 3, "Excellent soda à la vanille, j'adore le goût!", 5, '2022-06-24'),
-        (4, 3, 'Smoothie fraise-banane très savoureux, parfait pour le petit-déjeuner.', 5, '2022-06-24');
-    '''
+        INSERT INTO commentaire (id_boisson, id_utilisateur, commentaire, note, date_publication) VALUES
+            (1, 2, "Excellent soda à la vanille, j'adore le goût!", 5, '2022-06-27'),
+            (4, 2, 'Smoothie fraise-banane très savoureux, parfait pour le petit-déjeuner.', 5, '2022-06-27'),
+            (1, 2, "Excellent soda à la vanille, j'adore le goût!", 5, '2022-07-27'),
+            (4, 2, 'Smoothie fraise-banane très savoureux, parfait pour le petit-déjeuner.', 5, '2022-07-27'),
+            (1, 3, "Excellent soda à la vanille, j'adore le goût!", 5, '2022-06-24'),
+            (4, 3, 'Smoothie fraise-banane très savoureux, parfait pour le petit-déjeuner.', 5, '2022-06-24');
+        '''
 
     mycursor.execute(sql)
 
