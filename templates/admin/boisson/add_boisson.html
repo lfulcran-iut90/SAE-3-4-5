@@ -1,41 +1,50 @@
 {% extends 'admin/layout_admin.html' %}
 
 {% block title %}
-    <title>ajouter un boisson</title>
+<title>ajouter un boisson</title>
 {% endblock %}
 
 {% block body %}
-    <h2>ajouter un boisson</h2>
-    <div class="row mt-5">
-        <img class="card-img-top rounded mx-4 d-block"  style="width:200px; height:200px; border: 1px solid black; padding: 5px;" id="img_output" src="{{ url_for('static', filename = 'images/')}}no_photo.jpeg" alt="">
-        <div class="w-25">
-            <form class="w-190" method="post" action="/admin/boisson/add" enctype="multipart/form-data">
-                <label for="nom">Nom :
-                    <input name="nom" type="text" value=""  class="form-control" required>
-                </label>
-                <label for="prix">Prix (€) :
-                    <input name="prix" type="number" min="0.0" step="0.01" max="2147483647" value=""  class="form-control" required>
-                </label>
-                <label for="image"> Image :
-                    <input name="image" type="file" onchange="loadFile(event)"   class="form-control">
-                </label>
+<h2>ajouter un boisson</h2>
+<div class="row mt-5">
+    <img class="card-img-top rounded mx-4 d-block"
+         style="width:200px; height:200px; border: 1px solid black; padding: 5px;" id="img_output"
+         src="{{ url_for('static', filename = 'images/')}}no_photo.jpeg" alt="">
+    <div class="w-25">
+        <form class="w-190" method="post" action="/admin/boisson/add" enctype="multipart/form-data">
+            <label for="nom">Nom :
+                <input name="nom" type="text" value="" class="form-control" required>
+            </label>
+            <label for="prix">Prix (€) :
+                <input name="prix" type="number" min="0.0" step="0.01" max="2147483647" value="" class="form-control"
+                       required>
+            </label>
+            <label for="image"> Image :
+                <input name="image" type="file" onchange="loadFile(event)" class="form-control">
+            </label>
 
-                <label for="type_boisson_id">Type de l'boisson :
-                    <select name="type_boisson_id" required class="form-select">
-                        <option value="">Sélectionner un type d'boisson</option>
-                        {% for type in types_boisson %}
-                             <option value="{{ type.id_type_boisson }}"> {{ type.libelle }}</option>
-                        {% endfor %}
-                    </select>
-                </label>
-                <label for="description">description :
-                    <input name="description" type="text" class="form-control" >
-                </label>
-                <label for="submit">
-                    <input name="submit" type="submit" value="Ajouter" class="btn btn-primary mt-2">
-                </label>
-            </form>
-        <a href="/admin/boisson/show"><button class="btn btn-secondary mt-2">annuler</button></a>
-        </div>
+            <label for="type_boisson_id">Type de l'boisson :
+                <select name="type_boisson_id" required class="form-select">
+                    <option value="">Sélectionner un type d'boisson</option>
+                    {% for type in types_boisson %}
+                    <option value="{{ type.id_type_boisson }}"> {{ type.nom_type_boisson }}</option>
+                    {% endfor %}
+                </select>
+            </label>
+            <label for="stock">Stock :
+                <input name="stock" type="text" class="form-control">
+            </label>
+            <label for="volume">Volume :
+                <input name="volume" type="number" min="0.0" step="0.01" max="2147483647" value="" class="form-control"
+                       required>
+            </label>
+            <label for="submit">
+                <input name="submit" type="submit" value="Ajouter" class="btn btn-primary mt-2">
+            </label>
+        </form>
+        <a href="/admin/boisson/show">
+            <button class="btn btn-secondary mt-2">annuler</button>
+        </a>
     </div>
+</div>
 {% endblock %}

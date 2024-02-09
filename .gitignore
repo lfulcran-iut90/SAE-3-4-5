@@ -1,0 +1,5 @@
+.idea
+.gitignore
+pycache
+.git
+.env

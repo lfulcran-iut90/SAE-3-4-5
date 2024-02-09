@@ -6,7 +6,7 @@ from random import random
 
 from flask import Blueprint
 from flask import request, render_template, redirect, flash
-#from werkzeug.utils import secure_filename
+# from werkzeug.utils import secure_filename
 
 from connexion_db import get_db
 
@@ -17,7 +17,9 @@ admin_boisson = Blueprint('admin_boisson', __name__,
 @admin_boisson.route('/admin/boisson/show')
 def show_boisson():
     mycursor = get_db().cursor()
-    sql = '''  requête admin_boisson_1
+    sql = '''  SELECT * FROM boisson
+    LEFT JOIN arome a on boisson.arome_id = a.id_arome
+    LEFT JOIN type_boisson tb on boisson.type_boisson_id = tb.id_type_boisson
     '''
     mycursor.execute(sql)
     boissons = mycursor.fetchall()
@@ -27,12 +29,16 @@ def show_boisson():
 @admin_boisson.route('/admin/boisson/add', methods=['GET'])
 def add_boisson():
     mycursor = get_db().cursor()
+    sql = '''SELECT * FROM type_boisson
+    '''
+    mycursor.execute(sql)
+    type_boisson = mycursor.fetchall()
 
-    return render_template('admin/boisson/add_boisson.html'
-                           #,types_boisson=type_boisson,
-                           #,couleurs=colors
-                           #,tailles=tailles
-                            )
+    return render_template('admin/boisson/add_boisson.html',
+                           types_boisson=type_boisson
+                           # ,couleurs=colors
+                           # ,tailles=tailles
+                           )
 
 
 @admin_boisson.route('/admin/boisson/add', methods=['POST'])
@@ -42,26 +48,28 @@ def valid_add_boisson():
     nom = request.form.get('nom', '')
     type_boisson_id = request.form.get('type_boisson_id', '')
     prix = request.form.get('prix', '')
-    description = request.form.get('description', '')
+    stock = request.form.get('stock', '')
+    volume = request.form.get('volume', '')
     image = request.files.get('image', '')
 
     if image:
-        filename = 'img_upload'+ str(int(2147483647 * random())) + '.png'
+        filename = 'img_upload' + str(int(2147483647 * random())) + '.png'
         image.save(os.path.join('static/images/', filename))
     else:
         print("erreur")
-        filename=None
+        filename = None
 
-    sql = '''  requête admin_boisson_2 '''
+    sql = ''' INSERT INTO boisson (nom, prix, type_boisson_id, stock, volume, image) VALUES (%s, %s, %s,%s, %s, %s)
+    '''
 
-    tuple_add = (nom, filename, prix, type_boisson_id, description)
+    tuple_add = (nom, prix, type_boisson_id, stock, volume, filename)
     print(tuple_add)
     mycursor.execute(sql, tuple_add)
     get_db().commit()
 
     print(u'boisson ajouté , nom: ', nom, ' - type_boisson:', type_boisson_id, ' - prix:', prix,
-          ' - description:', description, ' - image:', image)
-    message = u'boisson ajouté , nom:' + nom + '- type_boisson:' + type_boisson_id + ' - prix:' + prix + ' - description:' + description + ' - image:' + str(
+          ' - stock:', stock, ' - image:', image, ' - volume:', volume)
+    message = u'boisson ajouté , nom : ' + nom + '- type_boisson : ' + type_boisson_id + ' - prix : ' + prix + ' - stock : ' + stock + '- volume : ' + volume + ' - image : ' + str(
         image)
     flash(message, 'alert-success')
     return redirect('/admin/boisson/show')
@@ -69,46 +77,63 @@ def valid_add_boisson():
 
 @admin_boisson.route('/admin/boisson/delete', methods=['GET'])
 def delete_boisson():
-    id_boisson=request.args.get('id_boisson')
+    id_boisson = request.args.get('id_boisson')
     mycursor = get_db().cursor()
-    sql = ''' requête admin_boisson_3 '''
+    # sql = ''' SELECT * FROM boisson ---> PARTIE DECLINAISON GL LUCAS FULCRAND
+    #  INNER JOIN arome a on boisson.arome_id = a.id_arome WHERE id_boisson = %s'''
+    # mycursor.execute(sql, id_boisson)
+    # nb_declinaison = mycursor.fetchone()
+    # if nb_declinaison['nb_declinaison'] > 0:
+    #     message= u'il y a des declinaisons dans cet boisson : vous ne pouvez pas le supprimer'
+    #     flash(message, 'alert-warning')
+    # else:
+    sql = ''' SELECT * FROM boisson WHERE id_boisson = %s '''
     mycursor.execute(sql, id_boisson)
-    nb_declinaison = mycursor.fetchone()
-    if nb_declinaison['nb_declinaison'] > 0:
-        message= u'il y a des declinaisons dans cet boisson : vous ne pouvez pas le supprimer'
-        flash(message, 'alert-warning')
-    else:
-        sql = ''' requête admin_boisson_4 '''
-        mycursor.execute(sql, id_boisson)
-        boisson = mycursor.fetchone()
-        print(boisson)
-        image = boisson['image']
+    boisson = mycursor.fetchone()
+    print(boisson)
+    image = boisson['image']
 
-        sql = ''' requête admin_boisson_5  '''
-        mycursor.execute(sql, id_boisson)
-        get_db().commit()
-        if image != None:
-            os.remove('static/images/' + image)
+    sql = ''' DELETE FROM commentaire WHERE id_boisson = %s  '''
+    mycursor.execute(sql, id_boisson)
+    get_db().commit()
+    sql = ''' DELETE FROM historique WHERE id_boisson = %s  '''
+    mycursor.execute(sql, id_boisson)
+    get_db().commit()
+    sql = ''' DELETE FROM liste_envie WHERE id_boisson = %s  '''
+    mycursor.execute(sql, id_boisson)
+    get_db().commit()
+    sql = ''' DELETE FROM ligne_panier WHERE boisson_id = %s  '''
+    mycursor.execute(sql, id_boisson)
+    get_db().commit()
+    sql = ''' DELETE FROM ligne_commande WHERE boisson_id = %s  '''
+    mycursor.execute(sql, id_boisson)
+    get_db().commit()
+    sql = ''' DELETE FROM boisson WHERE id_boisson = %s  '''
+    mycursor.execute(sql, id_boisson)
+    get_db().commit()
+    if image != None:
+        os.remove('static/images/' + image)
 
-        print("un boisson supprimé, id :", id_boisson)
-        message = u'un boisson supprimé, id : ' + id_boisson
-        flash(message, 'alert-success')
+    print("un boisson supprimé, id :", id_boisson)
+    message = u'un boisson supprimé, id : ' + id_boisson
+    flash(message, 'alert-success')
+
 
     return redirect('/admin/boisson/show')
 
 
 @admin_boisson.route('/admin/boisson/edit', methods=['GET'])
 def edit_boisson():
-    id_boisson=request.args.get('id_boisson')
+    id_boisson = request.args.get('id_boisson')
     mycursor = get_db().cursor()
     sql = '''
-    requête admin_boisson_6    
+    SELECT * FROM boisson WHERE id_boisson =%s
     '''
     mycursor.execute(sql, id_boisson)
     boisson = mycursor.fetchone()
     print(boisson)
     sql = '''
-    requête admin_boisson_7
+    SELECT * FROM type_boisson
     '''
     mycursor.execute(sql)
     types_boisson = mycursor.fetchall()
@@ -120,9 +145,9 @@ def edit_boisson():
     # declinaisons_boisson = mycursor.fetchall()
 
     return render_template('admin/boisson/edit_boisson.html'
-                           ,boisson=boisson
-                           ,types_boisson=types_boisson
-                         #  ,declinaisons_boisson=declinaisons_boisson
+                           , boisson=boisson
+                           , types_boisson=types_boisson
+                           #  ,declinaisons_boisson=declinaisons_boisson
                            )
 
 
@@ -134,10 +159,9 @@ def valid_edit_boisson():
     image = request.files.get('image', '')
     type_boisson_id = request.form.get('type_boisson_id', '')
     prix = request.form.get('prix', '')
-    description = request.form.get('description')
-    sql = '''
-       requête admin_boisson_8
-       '''
+    stock = request.form.get('stock')
+    volume = request.form.get('volume')
+    sql = '''SELECT image from boisson WHERE id_boisson = %s'''
     mycursor.execute(sql, id_boisson)
     image_nom = mycursor.fetchone()
     image_nom = image_nom['image']
@@ -150,27 +174,27 @@ def valid_edit_boisson():
             filename = 'img_upload_' + str(int(2147483647 * random())) + '.png'
             image.save(os.path.join('static/images/', filename))
             image_nom = filename
+    tuple_update = (nom, type_boisson_id, prix, stock, volume, image_nom, id_boisson)
+    sql = '''
+       UPDATE boisson SET nom =%s, type_boisson_id =%s, prix =%s, stock =%s, volume =%s, image = %s where id_boisson =%s
+       '''
+    mycursor.execute(sql, tuple_update)
 
-    sql = '''  requête admin_boisson_9 '''
-    mycursor.execute(sql, (nom, image_nom, prix, type_boisson_id, description, id_boisson))
+    # sql = '''  requête admin_boisson_9 '''
+    # mycursor.execute(sql, (nom, image_nom, prix, type_boisson_id, description, id_boisson))
 
     get_db().commit()
     if image_nom is None:
         image_nom = ''
-    message = u'boisson modifié , nom:' + nom + '- type_boisson :' + type_boisson_id + ' - prix:' + prix  + ' - image:' + image_nom + ' - description: ' + description
+    message = u'boisson modifié , nom:' + nom + '- type_boisson :' + type_boisson_id + ' - prix:' + prix + ' - image:' + image_nom + ' - stock: ' + stock + ' volume : ' + volume
     flash(message, 'alert-success')
     return redirect('/admin/boisson/show')
-
-
-
-
-
 
 
 @admin_boisson.route('/admin/boisson/avis/<int:id>', methods=['GET'])
 def admin_avis(id):
     mycursor = get_db().cursor()
-    boisson=[]
+    boisson = []
     commentaires = {}
     return render_template('admin/boisson/show_avis.html'
                            , boisson=boisson
