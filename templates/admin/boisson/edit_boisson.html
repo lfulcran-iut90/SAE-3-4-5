@@ -48,11 +48,21 @@ types_boisson : tableau de dictionnaires
                     {% endfor %}
                 </select>
             </label>
+
+                    <label for="arome_id">Arome :
+                <select name="arome_id" class="form-select">
+                    {% for type in arome %}
+                    <option value="{{ type.id_arome }}" {% if type.id_arome== boisson.arome_id %}
+                            selected {% endif %}> {{ type.nom_arome }}
+                    </option>
+                    {% endfor %}
+                </select>
+            </label>
             <label for="stock">Stock :
-                <input name="stock" type="text" value="{{ boisson.stock }}" class="form-control">
+                <input name="stock" type="number" value="{{ boisson.stock }}" class="form-control">
             </label>
             <label for="volume">Volume :
-                <input name="volume" type="text" value="{{ boisson.volume }}" class="form-control">
+                <input name="volume" type="number" value="{{ boisson.volume }}" class="form-control">
             </label>
             <button class="btn btn-primary mt-2">
                 Modifier

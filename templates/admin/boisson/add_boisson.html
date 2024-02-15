@@ -20,7 +20,7 @@
                        required>
             </label>
             <label for="image"> Image :
-                <input name="image" type="file" onchange="loadFile(event)" class="form-control">
+                <input name="image" type="file" onchange="loadFile(event)" class="form-control" required>
             </label>
 
             <label for="type_boisson_id">Type de l'boisson :
@@ -31,13 +31,22 @@
                     {% endfor %}
                 </select>
             </label>
+                    <label for="arome_id">Arome :
+                <select name="arome_id" required class="form-select">
+                    <option value="">Sélectionner un arome</option>
+                    {% for type in arome %}
+                    <option value="{{ type.id_arome }}"> {{ type.nom_arome }}</option>
+                    {% endfor %}
+                </select>
+            </label>
             <label for="stock">Stock :
-                <input name="stock" type="text" class="form-control">
+                <input name="stock" type="number" class="form-control">
             </label>
             <label for="volume">Volume :
                 <input name="volume" type="number" min="0.0" step="0.01" max="2147483647" value="" class="form-control"
                        required>
             </label>
+
             <label for="submit">
                 <input name="submit" type="submit" value="Ajouter" class="btn btn-primary mt-2">
             </label>
