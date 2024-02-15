@@ -174,7 +174,7 @@ INSERT INTO type_boisson (nom_type_boisson) VALUES
 ('Eau aromatisée');
 
 INSERT INTO boisson (nom, prix, volume, arome_id, conditionnement_id, type_boisson_id, description, fournisseur, marque, stock, image) VALUES
-('Soda à la vanille', 2.5, 500, 1, 1, 1, 'Boisson gazeuse à la vanille', 'ABC Company', 'SodaMaster',80, 'soda_vanille.jpg'),
+('Soda à la vanille', 2.5, 500, 1, 1, 1, 'Boisson gazeuse à la vanille', 'ABC Company', 'SodaMaster',80, ''),
 ('Jus de fraise', 3.0, 250, 2, 2, 2, 'Jus naturel de fraise', 'XYZ Juice Co.', 'FreshFruit',70, 'JusFraise.jpg'),
 ('Eau gazeuse citron', 1.0, 750, 3, 3, 3, 'Eau gazeuse au citron rafraîchissante', 'Aqua Ltd.','CitrusSplash',74, 'EauGazCitron.jpg'),
 ('Fraise-Banane Smoothie', 4.5, 400, 2, 1, 4, 'Smoothie rafraîchissant à la fraise et à la banane', 'SmoothieHeaven', 'BerryBanana',8, 'SmoothieFraiseBanane.jpg'),
